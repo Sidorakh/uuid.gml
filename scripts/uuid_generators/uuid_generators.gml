@@ -155,7 +155,7 @@ function generate_uuidv3() {
 /// @description Returns a UUID v4 (mostly random)
 /// @returns {String}
 
-function generate_uuidv4() {
+function generate_uuidv4(seed=undefined) {
     var bytes = array_create(16);
     array_copy(bytes,0,uuid_random(),0,16);
     array_delete(uuid_random(),0,16);
