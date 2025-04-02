@@ -101,7 +101,7 @@ function generate_uuidv1() {
         array_copy(state.node,0,uuid_random(),10,6);
         array_delete(uuid_random(),10,6);
         state.node[0] |= 0x01;
-        state.clockseq = (uuid_random()[8] << 8 | uuid_random()[9]) & 0x3fff;
+        state.sequence = (uuid_random()[8] << 8 | uuid_random()[9]) & 0x3fff;
     }
     state.ms = now;
     
