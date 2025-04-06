@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"uuid_generators",
+  "%Name":"snowflake_handlers",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"uuid_generators",
+  "name":"snowflake_handlers",
   "parent":{
     "name":"Scripts",
     "path":"folders/Scripts.yy",

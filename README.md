@@ -1,7 +1,7 @@
 uuid.gml
 --
 
-Some helper functions to work with UUID's in your GameMaker applications
+Some helper functions to work with UUIDs and Snowflakes in your GameMaker applications
 
 ## What are UUIDs?
 Universally Unique Identifiers (UUID's) are a 128 but label used to identify objects uniquely. While the probability of a UUID being unique is not zero, the chances of a correctly generated UUID being duplicated in the same system is negligible.
@@ -63,3 +63,28 @@ var v1 = generate_uuidv1();
 var v4 = generate_uuidv4();
 var v7 = generate_uuidv7();
 ```
+## What are Snowflakes?
+
+Snowflakes are 64-bit ID's based on a timestamp with a custom epoch, a machine ID, and a sequence number.
+
+### create_snowflake_parser
+This function returns a function that parses specific types of Snowflakes and returns a datetime in the format of milliseconds since 1st January, 1970 (Unix epoch, in milliseconds). For example, this code creates a parser for Twitter-style snowflakes and stores it in a static variable:
+```js
+function twitter_snowflake_get_time(snowflake) {
+    static epoch = 1288834974657;
+    static parser = create_snowflake_parser(epoch);
+    return parser(snowflake);
+}
+```
+
+### `create_snowflake_generator`
+This function returns a generator that creates snowflake IDs. For example, this code creates a custom generator for Twitter-style snowflakes and stores it in a static variable:
+```js
+function generate_twitter_snowflake(node_id=0,timestamp=undefined) {
+    static epoch = 1288834974657;
+    static generator = create_snowflake_generator(epoch);
+    return generator(node_id,timestamp);
+}
+```
+
+

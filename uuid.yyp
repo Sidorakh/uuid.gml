@@ -36,7 +36,8 @@
   "resources":[
     {"id":{"name":"obj_test","path":"objects/obj_test/obj_test.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
-    {"id":{"name":"uuid_generators","path":"scripts/uuid_generators/uuid_generators.yy",},},
+    {"id":{"name":"snowflake_handlers","path":"scripts/snowflake_handlers/snowflake_handlers.yy",},},
+    {"id":{"name":"uuid_handlers","path":"scripts/uuid_handlers/uuid_handlers.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
