@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"uuid_handlers",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"uuid.gml",
+    "path":"folders/uuid.gml.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

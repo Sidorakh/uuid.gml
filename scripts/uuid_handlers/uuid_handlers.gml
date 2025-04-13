@@ -49,6 +49,16 @@ function byte_to_hex(num) {
     return string_copy(hex,string_length(hex)-1,2);
 }
 
+function hex_to_bytes(hex) {
+    var bytes = array_create(string_length(hex)/2,0);
+    var idx = 0;
+    for (var i=1;i<=string_length(hex);i+=2) {
+        var byte = real("0x"+string_copy(hex,i,2));
+        bytes[idx++] = byte;
+    }
+    return bytes;
+}
+
 /// @description Converts an array of bytes to a UUID
 function stringify_uuid(bytes) {
     //"xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx"
@@ -161,8 +171,13 @@ function generate_uuidv1() {
     
 }
 
-function generate_uuidv3() {
-    
+/// @description Generates a UUIDv3 (namespaced/MD5)
+/// @argument {String} value UUID value
+/// @argument {String | Real} namespace Namespace ID or Namespace UUID
+/// @return {String} a namespaced UUIDv5
+/// 
+function generate_uuidv3(value,namespace) {
+    return generate_namespaced_uuid(0x30,value,namespace);
 }
 
 /// @description Returns a UUID v4 (mostly random)
@@ -178,16 +193,76 @@ function generate_uuidv4(seed=undefined) {
     return stringify_uuid(bytes);
 }
 
-function generate_uuidv5() {
+/// @description Generates a UUIDv5 (namespaced/SHA1)
+/// @argument {String} value UUID value
+/// @argument {String | Real} namespace Namespace ID or Namespace UUID
+/// @return {String} a namespaced UUIDv5
+function generate_uuidv5(value,namespace) {
+    return generate_namespaced_uuid(0x50,value,namespace);
+}
+
+enum UUID_NAMESPACE {
+    DNS,
+    URL,
+    OID,
+    X500
+}
+/// @description Internal function; generates either a UUIDv3 or 5 based on the version parameter (either 0x30 or 0x50)
+/// @argument {Real} version UUID version byte
+/// @argument {String} value UUID value
+/// @argument {String | Real} namespace Namespace ID or UUID
+/// @returns {String} a UUID v3 or v5
+function generate_namespaced_uuid(version,value,namespace) {
+    static namespace_dns =  [107, 167, 184, 16, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200];
+    static namespace_url =  [107, 167, 184, 17, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200];
+    static namespace_oid =  [107, 167, 184, 18, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200];
+    static namespace_x500 = [107, 167, 184, 20, 157, 173, 17, 209, 128, 180, 0, 192, 79, 212, 48, 200];
+    static buff = buffer_create(array_length(namespace_dns),buffer_grow,1);
+    buffer_seek(buff,buffer_seek_start,0);
+    
+    var arr = namespace_dns;
+    if (is_int64(namespace)) {
+        if (namespace == UUID_NAMESPACE.DNS) {
+            arr = namespace_dns;
+        } else if (namespace == UUID_NAMESPACE.URL) {
+            arr = namespace_url;
+        } else if (namespace == UUID_NAMESPACE.OID) {
+            arr = namespace_oid;
+        } else if (namespace == UUID_NAMESPACE.X500) {
+            arr = namespace_x500;
+        }
+    } else {
+        arr = hex_to_bytes(string_replace_all(namespace,"-",""));
+    }
+    
+    for (var i=0;i<array_length(arr);i++) {
+        buffer_write(buff,buffer_u8,arr[i]);
+    }
+    buffer_write(buff,buffer_text,value);
+    
+    var hash = "";
+    if (version == 0x30) {
+        hash = buffer_md5(buff,0,buffer_tell(buff));
+    } else {
+        hash = buffer_sha1(buff,0,buffer_tell(buff));
+    }
+    var bytes = hex_to_bytes(hash);
+    bytes[6] = (bytes[6] & 0x0f) | version;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    
+    return stringify_uuid(bytes);
+    
+    
     
 }
 
-function generate_uuidv6() {
-    
-}
+//function generate_uuidv6() {
+    //
+//}
+
 
 /// @description Returns a UUID v7 (timestamp + random bytes)
-
+/// @return {String} a UUID string
 function generate_uuidv7() {
     static state = {
         ms: -infinity,

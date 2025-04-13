@@ -8,12 +8,25 @@ if (keyboard_check_pressed(ord("1"))) {
     clipboard_set_text(str);
 }
 
+if (keyboard_check_pressed(ord("3"))) {
+    var value = get_string("Value","test");
+    var str = generate_uuidv3(value,UUID_NAMESPACE.DNS);
+    show_message(str);
+    clipboard_set_text(str);
+}
 if (keyboard_check_pressed(ord("4"))) {
     var str = "";
     repeat (10) {
         str += generate_uuidv4() + "\n";
     }
     show_message("Done");
+    clipboard_set_text(str);
+}
+
+if (keyboard_check_pressed(ord("5"))) {
+    var value = get_string("Value","test");
+    var str = generate_uuidv5(value,UUID_NAMESPACE.DNS);
+    show_message(str);
     clipboard_set_text(str);
 }
 
